@@ -51,7 +51,7 @@ class GG_Plista {
 			$this->stop_categories = $config['stop_categories'];
 
 		if(isset($config['default_image_url']))
-			$this->default_image_url = $config['defult_image_url'];	
+			$this->default_image_url = $config['default_image_url'];	
 
 		if(isset($config['priority']))
 			$this->priority = $config['priority'];
