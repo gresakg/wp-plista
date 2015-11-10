@@ -9,6 +9,7 @@ Author URI: http://gresak.net
 */
 
 include_once "config.php";
+include_once "gg-plista-widget.php";
 
 if(empty($plista_config)) {
 	$plista_config['no_config'] = true;
@@ -81,8 +82,7 @@ class GG_Plista {
 			add_action($this->custom_hook,array($this,'print_bellow_article'));
 		}
 		add_action('wp_footer',array($this,'print_js'));
-
-
+		add_action('widgets_init',array($this,'register_widget'));
 	}
 
 	/**
@@ -126,6 +126,11 @@ class GG_Plista {
 	 */
 	public function sidebar_widget() {
 		echo '<div data-widget="plista_widget_sidebar"></div>';
+	}
+
+
+	public function register_widget() {
+		register_widget( "GG_Plista_Widget" );
 	}
 
 	/**
