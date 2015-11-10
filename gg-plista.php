@@ -29,6 +29,8 @@ class GG_Plista {
 	protected $timestamp;
 	protected $stop_categories;
 	protected $default_image_url;
+	protected $the_content = true;
+	protected $custom_hook;
 	protected $priority = 10;
 
 	/**
@@ -56,6 +58,12 @@ class GG_Plista {
 		if(isset($config['priority']))
 			$this->priority = $config['priority'];
 
+		if(isset($config['the_content']))
+			$this->the_content = $config['the_content'];
+
+		if(isset($config['custom_hook']))
+			$this->custom_hook = $config['custom_hook'];
+
 		$this->setup_hooks();
 	}
 
@@ -63,11 +71,18 @@ class GG_Plista {
 	 * Set up the hooks
 	 * @return [type] [description]
 	 */
-	protected function setup_hooks()
-	{
+	protected function setup_hooks() {
+
 		add_action('wp',array($this,'init'));
-		add_filter('the_content',array($this,'bellow_article'),$this->priority);
+		if($this->the_content) {
+			add_filter('the_content',array($this,'bellow_article'),$this->priority);
+		}
+		if(!empty($this->custom_hook)) {
+			add_action($this->custom_hook,array($this,'print_bellow_article'));
+		}
 		add_action('wp_footer',array($this,'print_js'));
+
+
 	}
 
 	/**
@@ -82,18 +97,27 @@ class GG_Plista {
 		$this->image = wp_get_attachment_image_src( get_post_thumbnail_id(), 'large' )[0];
 		if(empty($this->image))
 			$this->image = $this->default_image_url; 
-		$this->category = $this->get_single_category($id); //get_the_category()[0]->name;
+		$this->category = $this->get_single_category($id); 
 		$this->timestamp = get_the_time('U');
 	}
 
 	/**
-	 * Print out the placeholder. This function is meant to be hooked to 
-	 * the_content filter hook
+	 * Add the placeholder to the content. This function is meant to be hooked to 
+	 * the_content or similar filter hook
 	 * @param  string $content the post content
 	 * @return string          altered post content
 	 */
 	public function bellow_article($content) {
 		return $content . '<div data-widget="plista_widget_belowArticle"></div>';
+	}
+
+	/**
+	 * Print placeholder bellow article. This method is meant to be hooked to an
+	 * action hook
+	 * @return [type] [description]
+	 */
+	public function print_bellow_article() {
+		echo $this->bellow_article("");
 	}
 
 	/**
