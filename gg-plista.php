@@ -133,7 +133,7 @@ class GG_Plista {
 	 * @return string
 	 */
 	public function print_js() {
-		if(is_single()):
+		if(is_singular()):
 		?>
 		<!-- Plista begin -->
 		<script type="text/javascript">
