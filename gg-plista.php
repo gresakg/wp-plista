@@ -47,7 +47,8 @@ class GG_Plista {
 		if(empty($config['pub_key'])) {
 			add_action('admin_notices',array($this,'no_pub_key_warning'));
 		}
-
+		$this->domain_id = $config['domain_id'];
+		$this->api_key = $config['api_key'];
 		$this->key = $config['pub_key'];
 
 		if(isset($config['stop_categories']));
@@ -83,6 +84,7 @@ class GG_Plista {
 		}
 		add_action('wp_footer',array($this,'print_js'));
 		add_action('widgets_init',array($this,'register_widget'));
+		add_action("transition_post_status",array($this,'remove'),10,3);
 	}
 
 	/**
@@ -138,7 +140,7 @@ class GG_Plista {
 	 * @return string
 	 */
 	public function print_js() {
-		if(is_singular()):
+		if(is_singular() && 'publish' == get_post_status()):
 		?>
 		<!-- Plista begin -->
 		<script type="text/javascript">
@@ -189,6 +191,19 @@ class GG_Plista {
 		</div>";
 	}
 
+	public function remove($new_status, $old_status, $post) {
+		if("publish" == $old_status && $new_status != "publish") {
+			$uri = "http://farm.plista.com/api/item/update/"
+				.$post->ID
+				."?domainid=".$this->domain_id
+				."&apikey=".$this->api_key
+				."&weight=8";
+			error_log($uri);
+			$response = wp_remote_get($uri);
+			error_log(json_encode($response));
+		}
+	}
+
 	/**
 	 * Helper function to extract one single categroy for plista
 	 * @param  int $id post id
@@ -202,6 +217,5 @@ class GG_Plista {
 	 			return $category;
 	 		}
 	 	}
- }
-
+ 	}
 }

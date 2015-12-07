@@ -2,9 +2,17 @@
 
 $plista_config = array(
 	/**
+	 * Id for the plista API
+	 */
+	'domainid' => "your domain id"
+	/**
 	 * pub_key this is required. Get it from plista.com
 	 */
-	'pub_key' => "your_pub_key", 
+	'pub_key' => "your_pub_key",
+	/**
+	 * Private key for communication with plista api
+	 */
+	'api_key' => "your private key",
 	/**
 	 * Append to content via the_content hook
 	 */
